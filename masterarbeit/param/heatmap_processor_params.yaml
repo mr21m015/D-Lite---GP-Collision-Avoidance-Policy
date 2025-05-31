@@ -1,0 +1,13 @@
+
+# Grundlegende Konfigurationen für die Kartendimensionen und Auflösung
+mapframe: map
+frame_size_X: 420
+frame_size_Y: 420
+Resolution: 0.05
+
+# Themen, von denen Daten abonniert werden
+observation_sources: "obstacles, particlecloud, odom"
+topic: obstacles
+
+# Interpolationsmethode wählen
+interpolation_type: Linear     #Nearest, Linear, Cubic_convolution, Cubic

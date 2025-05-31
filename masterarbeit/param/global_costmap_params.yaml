@@ -1,0 +1,31 @@
+global_costmap:
+  global_frame: map
+  robot_base_frame: base_footprint
+
+  update_frequency: 10.0
+  publish_frequency: 10.0
+  transform_tolerance: 0.1
+
+  static_map: false
+  rolling_window: false
+
+  always_send_full_costmap: true
+
+  plugins:
+    - {name: static_layer, type: "costmap_2d::StaticLayer"}
+    - {name: heatmap_layer, type: "masterarbeit::HeatmapObstacleLayer"}
+    - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+
+  static_layer:
+    map_topic: "/map"
+    subscribe_to_updates: false
+
+  heatmap_layer:
+    observation_persistence: 5.0
+    rolling_window: false
+    interpolation_type: Linear
+    observation_sources: obstacles
+    obstacles: {sensor_frame: map, data_type: Obstacles, topic: obstacles, marking: true, clearing: true}
+
+  inflation_layer:
+    inflation_radius: 0.1

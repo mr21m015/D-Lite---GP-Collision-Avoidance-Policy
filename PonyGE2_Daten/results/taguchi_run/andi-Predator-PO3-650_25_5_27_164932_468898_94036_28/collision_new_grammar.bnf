@@ -1,0 +1,121 @@
+# =============================================
+# grammar_collision.bnf für GP
+# Zeitabhängige Collision‐Avoidance‐Policy
+# =============================================
+<start>       ::= <if_expr>
+
+# Ein Ausdruck ist entweder ein IF‐Konstrukt oder eine finale Aktion
+<expr>        ::= <if_expr> | <action>
+
+# Verschachtelbare If‐Then‐Else‐End Konstruktion
+<if_expr>     ::=  <expr> if <direction_compound_expr> else <expr> 
+
+
+<direction_compound_expr> ::= <boolean_feature> "and" <bool_expr>
+                            | <boolean_feature> "or" <bool_expr>
+
+# Boolesche Ausdrücke mit Vergleichen und Logik
+<bool_expr>   ::= <bool_term> | <bool_expr> or <bool_term>
+<bool_term>   ::= <bool_factor> | <bool_term> and <bool_factor>
+<bool_factor> ::= <compare> | not <bool_factor> | ( <bool_expr> ) 
+
+# Vergleich zweier numerischer Ausdrücke
+<compare>     ::= <arith_expr> <comp_op> <arith_expr>
+
+# Vergleichsoperatoren
+<comp_op>     ::= > | < | >= | <= | == | !=
+<string_equality_operator> ::= == | !=
+
+
+# Arithmetische Ausdrücke
+<arith_expr>  ::= <numeric_feature> | <number> | p_div( <arith_expr> , <arith_expr> ) 
+                | hypot( <arith_expr> , <arith_expr> ) | ( <arith_expr> <math_op> <arith_expr> )
+                
+<math_op>     ::= + | - | * 
+
+# Beobachtungs‐Features (inkl. Zeitstempel)
+<numeric_feature>   ::= intersect_centers_x | intersect_centers_y
+                    | intersect_radius          
+                    | obstacle_x | obstacle_y   
+                    | velocity_x | velocity_y
+
+                    
+<boolean_feature>   ::= direction | "not" direction
+
+# Aktion am Blatt: Pfadwahl
+<action>      ::= "'RECHTS'" | "'LINKS'"
+
+# Gleitkommazahlen und ganze Zahlen
+<number>      ::= <maybe_sign><digit>.<digit><digit>
+<digit>       ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+<maybe_sign>  ::= "" | -
+
+# # =============================================
+# # grammar_collision.bnf für GP
+# # Zeitabhängige Collision‐Avoidance‐Policy
+# # =============================================
+# <start>       ::= <if_expr>
+
+# # Ein Ausdruck ist entweder ein IF‐Konstrukt oder eine finale Aktion
+# <expr>        ::= <if_expr> | <action>
+
+# # Verschachtelbare If‐Then‐Else‐End Konstruktion
+# <if_expr>     ::=  <expr> if <direction_compound_expr> else <expr> 
+
+# <direction_compound_expr> ::= <boolean_feature> "and" <bool_expr>
+#                             | <boolean_feature> "or" <bool_expr>
+
+# # Boolesche Ausdrücke mit Vergleichen und Logik
+# <bool_expr>   ::= <bool_term> | <bool_expr> or <bool_term>
+# <bool_term>   ::= <bool_factor> | <bool_term> and <bool_factor>
+# <bool_factor> ::= <compare> | not <bool_factor> | ( <bool_expr> ) | <compare_pos_category>
+#                 | <compare_vel_category> 
+
+# # Vergleich zweier numerischer Ausdrücke
+# <compare>     ::= <arith_expr> <comp_op> <arith_expr>
+
+# # Vergleichsoperatoren
+# <comp_op>     ::= > | < | >= | <= | == | !=
+# <string_equality_operator> ::= == | !=
+
+# <compare_pos_category> ::= <obstacle_pos_variable> <string_equality_operator> <pos_cat_literal>
+# <compare_vel_category> ::= <obstacle_vel_variable> <string_equality_operator> <vel_cat_literal>
+
+# # Arithmetische Ausdrücke
+# <arith_expr>  ::= <numeric_feature> | <number> | p_div( <arith_expr> , <arith_expr> ) | ( <arith_expr> <math_op> <arith_expr> )
+#                 | hypot( <arith_expr> , <arith_expr> ) | abs( <arith_expr> ) | min( <arith_expr> , <arith_expr> ) | max( <arith_expr> , <arith_expr> )
+                
+# <math_op>     ::= + | - | * 
+
+# # Beobachtungs‐Features (inkl. Zeitstempel)
+# <numeric_feature>   ::= intersect_centers_x | intersect_centers_y       # intersect_centers
+#                     | intersect_radius          # intersect_radius
+#                     | obstacle_x | obstacle_y   # obstacle_position
+#                     | velocity_x | velocity_y   # obstacle_velocity
+
+                    
+# <boolean_feature>   ::= direction | "not" direction
+
+# #Richtung der Obstacles
+# <obstacle_pos_variable> ::= obstacle_pos_category
+# <obstacle_vel_variable> ::= obstacle_vel_category
+
+# <vel_cat_literal> ::= "'STATIONAER'" 
+#                     | "'GERADE_ZUKOMMEND'" | "'GERADE_WEGFAHREND'" 
+#                     | "'LINKS_ZUKOMMEND'" | "'LINKS_WEGFAHREND'" 
+#                     | "'RECHTS_ZUKOMMEND'" | "'RECHTS_WEGFAHREND'"
+
+# <pos_cat_literal> ::= "'AUF_PFAD'" 
+#                     | "'LEICHT_LINKS'" | "'LINKS'" 
+#                     | "'LEICHT_RECHTS'" | "'RECHTS'"
+
+
+# # Aktion am Blatt: Pfadwahl
+# <action>      ::= "'RECHTS'" | "'LINKS'"
+
+# # Gleitkommazahlen und ganze Zahlen
+# <number>      ::= <maybe_sign><digit>.<digit>
+# <digit>       ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+# <maybe_sign>  ::= "" | -
+
+

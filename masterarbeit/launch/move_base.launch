@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<launch>
+  <!--Input Arguments -->
+  <arg name = "robot_name" />
+  <arg name = "output" default="screen"/>
+
+  <!-- Arguments -->
+  <arg name="odom_frame_id"   default="$(arg robot_name)_tf/odom"/>
+  <arg name="base_frame_id"   default="$(arg robot_name)_tf/base_footprint"/>
+  <arg name="scan_topic" default="$(arg robot_name)/scan" />
+  <arg name="global_frame_id" default="map"/>
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="cmd_vel_topic" default="/$(arg robot_name)/cmd_vel" />
+  <arg name="odom_topic" default="/$(arg robot_name)/odom" />
+  <arg name="move_forward_only" default="true"/>
+
+  <node pkg="move_base" type="move_base"  name="move_base_$(arg robot_name)" respawn="true" output="$(arg output)">
+    <param name="base_global_planner" value="masterarbeit/GlobalDPlanner"/>
+
+    <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+    <rosparam file="$(find masterarbeit)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
+
+    <rosparam file="$(find masterarbeit)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find masterarbeit)/param/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find masterarbeit)/param/costmap_common_params_burger.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find masterarbeit)/param/costmap_common_params_burger.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find masterarbeit)/param/global_planner_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_navigation)/param/move_base_params.yaml" command="load" />
+        
+    <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
+    <remap from="odom" to="$(arg odom_topic)"/>
+    <param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
+    
+    <param name="robot" value="$(arg robot_name)"/>
+    <param name="global_costmap/global_frame" value="$(arg global_frame_id)"/>
+    <param name="global_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
+    <param name="local_costmap/global_frame" value="$(arg odom_frame_id)"/>
+    <param name="local_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
+    <param name="DWAPlannerROS/global_frame_id" value="$(arg odom_frame_id)"/>
+    <remap from="map" to="/map" />
+    <remap from="/move_base" to="/move_base_$(arg robot_name)"/>
+  </node>
+
+</launch>

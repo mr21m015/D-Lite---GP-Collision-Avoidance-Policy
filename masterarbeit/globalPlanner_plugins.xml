@@ -1,0 +1,7 @@
+<class_libraries>
+  <library path="libmasterarbeit">
+    <class name="masterarbeit/GlobalDPlanner" type="masterarbeit::GlobalDPlanner" base_class_type="nav_core::BaseGlobalPlanner">
+      <description>This is a global planner based on D*, A*, or Dijkstra's algorithm depending on configuration. It calculates the safest and/or shortest path from start to goal on a given costmap.</description>
+    </class>
+  </library>
+</class_libraries>

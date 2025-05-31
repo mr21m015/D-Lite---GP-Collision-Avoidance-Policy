@@ -1,0 +1,13 @@
+Generation:
+10
+
+Phenotype:
+'LINKS' if direction or not obstacle_x != obstacle_y and not not robot_pos_x != odom_vel_x and ( robot_pos_x == obstacle_x ) or ( robot_pos_x < intersect_centers_y or 7.70 <= robot_pos_x ) or not not odom_vel_y < 2.17 else 'LINKS'
+
+Genotype:
+[11318, 58070, 72957, 23445, 92663, 91064, 40087, 65687, 71518, 84723, 91671, 6704, 31246, 25257, 59023, 78430, 20254, 4073, 72880, 5328, 85621, 66349, 23274, 42846, 71065, 94620, 21929, 75960, 78811, 65519, 27462, 32926, 91353, 74969, 58450, 29049, 70018, 96620, 62890, 79200, 39944, 10703, 31910, 12244, 37380, 32381, 96300, 9854, 5431, 63025, 78519, 12542, 79707, 74363, 81286, 35067, 62326, 26057, 15987, 32210, 36291, 55135, 60003, 48796, 30124, 23551, 19638, 45618, 53190, 84026, 99613, 70656, 71636, 86924, 99782, 29441, 89727, 18181, 38935, 20829, 70914, 85073, 12439, 52978, 8538, 2957, 15467, 77896, 27269, 31655, 77125, 67055, 49346, 34198, 88712, 38679, 15760, 33898, 93232, 75943, 99389, 56655, 42844, 3284, 69499, 57080, 57708, 49341, 18674, 65178, 47863, 79470, 62766, 3465, 48887, 28952, 27787, 86066]
+Tree:
+(<start> (<if_expr> (<expr> (<action> 'LINKS'))  if  (<direction_compound_expr> (<boolean_feature> direction)  or  (<bool_expr> (<bool_expr> (<bool_expr> (<bool_term> (<bool_term> (<bool_term> (<bool_factor> not  (<bool_factor> (<compare> (<arith_expr> (<numeric_feature> obstacle_x))   (<comp_op> !=)   (<arith_expr> (<numeric_feature> obstacle_y))))))  and  (<bool_factor> not  (<bool_factor> not  (<bool_factor> (<compare> (<arith_expr> (<numeric_feature> robot_pos_x))   (<comp_op> !=)   (<arith_expr> (<numeric_feature> odom_vel_x)))))))  and  (<bool_factor> (  (<bool_expr> (<bool_term> (<bool_factor> (<compare> (<arith_expr> (<numeric_feature> robot_pos_x))   (<comp_op> ==)   (<arith_expr> (<numeric_feature> obstacle_x))))))  ))))  or  (<bool_term> (<bool_factor> (  (<bool_expr> (<bool_expr> (<bool_term> (<bool_factor> (<compare> (<arith_expr> (<numeric_feature> robot_pos_x))   (<comp_op> <)   (<arith_expr> (<numeric_feature> intersect_centers_y))))))  or  (<bool_term> (<bool_factor> (<compare> (<arith_expr> (<number> (<maybe_sign> ) (<digit> 7) . (<digit> 7) (<digit> 0)))   (<comp_op> <=)   (<arith_expr> (<numeric_feature> robot_pos_x))))))  ))))  or  (<bool_term> (<bool_factor> not  (<bool_factor> not  (<bool_factor> (<compare> (<arith_expr> (<numeric_feature> odom_vel_y))   (<comp_op> <)   (<arith_expr> (<number> (<maybe_sign> ) (<digit> 2) . (<digit> 1) (<digit> 7))))))))))  else  (<expr> (<action> 'LINKS'))))
+
+Fitness:
+12.060640924842797

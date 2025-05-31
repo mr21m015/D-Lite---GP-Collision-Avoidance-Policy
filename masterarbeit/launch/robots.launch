@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <!-- Robot Names -->
+  <arg name ="output" default = "screen"/>
+
+  <arg name ="first_robot" default = "robot1" />
+  <arg name="init_x_first_robot" default = "0.0" />
+  <arg name="init_y_first_robot" default = "-7.1" />
+  <arg name="init_z_first_robot" default = "0.1" />
+  
+  <arg name = "second_robot" default = "robot2" />
+  <arg name="init_x_second_robot" default = "0.0" />
+  <arg name="init_y_second_robot" default = "-1.9" />
+  <arg name="init_z_second_robot" default = "0.1" />
+
+  <!-- No namespace here as we will share this description. 
+        Access with slash at the beginning -->
+  <param name="robot_description"
+    command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_burger_for_autorace.urdf.xacro"/>    
+
+  <!-- BEGIN ROBOT 1-->
+  <group ns="$(arg first_robot)">
+    <param name="tf_prefix" value="$(arg first_robot)_tf" />
+    <include file="$(find masterarbeit)/launch/one_robot.launch" >
+      <arg name="x_pos" value="$(arg init_x_first_robot)" />
+      <arg name="y_pos" value="$(arg init_y_first_robot)" />
+      <arg name="z_pos" value="$(arg init_z_first_robot)" />
+      <arg name="robot_name"  value="$(arg first_robot)" />
+      <arg name="robot_name_other"  value="$(arg second_robot)" />
+      <arg name="seed_value"  value="1" />
+      <arg name="output"      value="$(arg output)"/>
+    </include>
+  </group>
+
+  <!--BEGIN ROBOT 2-->
+  <group ns="$(arg second_robot)">
+    <param name="tf_prefix" value="$(arg second_robot)_tf" />
+    <include file="$(find masterarbeit)/launch/one_robot.launch" >
+      <arg name="x_pos" value="$(arg init_x_second_robot)" />
+      <arg name="y_pos" value="$(arg init_y_second_robot)" />
+      <arg name="z_pos" value="$(arg init_z_second_robot)" />
+      <arg name="robot_name"  value="$(arg second_robot)" />
+      <arg name="robot_name_other"  value="$(arg first_robot)" />
+      <arg name="seed_value"  value="2" />
+      <arg name="output"      value="$(arg output)"/>
+    </include>
+  </group>
+
+</launch>

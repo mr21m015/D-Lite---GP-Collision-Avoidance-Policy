@@ -1,0 +1,116 @@
+<?xml version="1.0" ?>
+<launch>
+    <arg name="robot_name"/>
+    <arg name="robot_name_other"/>
+    <arg name="x_pos"/>
+    <arg name="y_pos"/>
+    <arg name="z_pos"/>
+    <arg name="seed_value"/>
+    <arg name="output" default="screen"/>
+    <arg name="log_base_dir" default="/home/andi/Schreibtisch/Backup/Simulation_Data_Check_3"/>
+
+    <node pkg="gazebo_ros" type="spawn_model" name="urdf_spawner"
+        args="-urdf -model $(arg robot_name) -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos)  -param /robot_description"
+        respawn="false" output="$(arg output)"/>
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher"  respawn="true" name="robot_state_publisher" output="$(arg output)"/>
+
+    <node pkg="tf2_ros" type="static_transform_publisher" respawn="true" name="tf_map_$(arg robot_name)"
+        args="0.325 0.325 0 0 0 0  /map $(arg robot_name)_tf/odom" output="$(arg output)"/>
+
+    <remap from="/$(arg robot_name)/map" to="/map"/>
+
+    <include file="$(find masterarbeit)/launch/amcl.launch">
+        <arg name="robot_name" value= "$(arg robot_name)" />
+        <arg name="ns_tf" value="$(arg robot_name)_tf/"/>
+        <arg name="scan_topic" value="/$(arg robot_name)/scan"/>       
+        <arg name="initial_pose_x" value="$(arg x_pos)" />
+        <arg name="initial_pose_y" value="$(arg y_pos)" />
+        <arg name="output" value="$(arg output)" />
+    </include>
+
+    <node pkg="masterarbeit" type="heatmap_processor" name="heatmap_processor" respawn="true" output="screen">
+        <rosparam file="$(find masterarbeit)/param/heatmap_processor_params.yaml" />
+        <param name="robot" value="$(arg robot_name)"/>
+    </node>
+
+    <include file="$(find masterarbeit)/launch/move_base.launch" >
+        <arg name="robot_name" value= "$(arg robot_name)"/>
+        <arg name="move_forward_only" value="false"/>
+        <arg name="output" value="$(arg output)" />
+    </include>
+
+    <node name="obstacle_extractor" pkg="obstacle_detector" type="obstacle_extractor_node" respawn="true" output="$(arg output)">
+        <param name="active"               value="true"/>
+        <param name="use_scan"             value="true"/>
+        <param name="use_pcl"              value="false"/>
+    
+        <param name="use_split_and_merge"    value="false"/>
+        <param name="circles_from_visibles"  value="true"/>
+        <param name="discard_converted_segments" value="true"/>
+        <param name="transform_coordinates"  value="true"/>
+    
+        <param name="min_group_points"     value="3"/>
+    
+        <param name="max_group_distance"   value="0.2"/>
+        <param name="distance_proportion"  value="0.005"/>
+        <param name="max_split_distance"   value="0.2"/>
+        <param name="max_merge_separation" value="0.2"/>
+        <param name="max_merge_spread"     value="0.2"/>
+        <param name="max_circle_radius"    value="0.6"/>
+        <param name="radius_enlargement"   value="0.0"/>
+    
+        <param name="frame_id"             value="map"/>
+    </node>
+    
+    <node name="obstacle_tracker" pkg="obstacle_detector" type="obstacle_tracker_node" respawn="true" output="log"> 
+        <param name="active"                  value="true"/>
+
+        <param name="loop_rate"               value="10.0"/>
+        <param name="tracking_duration"       value="2.0"/>
+        <param name="min_correspondence_cost" value="0.7"/>
+        <param name="std_correspondence_dev"  value="0.2"/>
+        <param name="process_variance"        value="0.05"/>  
+        <param name="process_rate_variance"   value="0.03"/>  
+        <param name="measurement_variance_p"  value="0.016"/>
+        <param name="measurement_variance_v"  value="0.16"/>
+
+        <param name="num_particles"           value="3000"/> 
+    
+        <param name="frame_id"                value="map"/>
+    
+        <remap from="tracked_obstacles" to="obstacles"/>
+    </node>
+
+    <node pkg="masterarbeit"  type="navigation_goals" name="navigation_goals_$(arg robot_name)" output="$(arg output)" respawn="true" args="$(arg robot_name) $(arg seed_value)">
+        <rosparam file="$(find masterarbeit)/maps/Goals test_$(arg robot_name).yaml" command="load"/>
+    </node>
+
+    <node pkg="masterarbeit" type="collision_detector" name="collision_detector_$(arg robot_name)" respawn="true" output="$(arg output)">
+        <param name="robot" value="$(arg robot_name)"/>
+    </node>
+
+
+    <node pkg="masterarbeit" type="collector_node.py" name="collector_node" respawn="true" output="$(arg output)">
+        <param name="robot" value="$(arg robot_name)"/>
+        <param name="log_base_directory" value="$(arg log_base_dir)"/>
+    </node>
+
+    <node pkg="masterarbeit" type="transform_collector_node.py" name="transform_collector_node" respawn="true" output="$(arg output)">
+        <param name="robot" value="$(arg robot_name)"/>
+        <param name="log_base_directory" value="$(arg log_base_dir)"/>
+    </node>
+
+    
+    <node pkg="masterarbeit" type="robot_state_tracker.py" name="robot_state_tracker" output="screen">
+        <param name="robot_name" value="$(arg robot_name)"/>
+        <param name="log_base_directory" value="$(arg log_base_dir)"/>
+    </node>
+
+    <!--node pkg="masterarbeit" type="particlefilter_check.py" name="particlefilter_check_node" respawn="true" output="$(arg output)">
+        <param name="robot" value="$(arg robot_name)"/>
+        <param name="robot_other" value="$(arg robot_name_other)"/>
+        <param name="log_base_directory" value="$(arg log_base_dir)"/>
+    </node-->
+
+</launch>
